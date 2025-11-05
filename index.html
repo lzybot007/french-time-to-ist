@@ -19,16 +19,16 @@
       let [hours, minutes] = input.split(':').map(Number);
 
       // adding 4 hours 30 minutes
-      minutes += 30;
+      minutes -= 30;
       if (minutes >= 60) {
         minutes -= 60;
         hours += 1;
       }
-      hours += 4;
+      hours -= 4;
       if (hours >= 24) {
         hours -= 24;
       }
-
+      
       const formatted = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
       document.getElementById('result').textContent = `French Time: ${formatted}`;
     }
