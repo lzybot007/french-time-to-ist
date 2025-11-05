@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>French to IST Time Converter</title>
+</head>
+<body class="p-6">
+  <h1 class="text-xl font-bold mb-4">French Time to IST Converter</h1>
+  <label>Enter French Time (HH:MM): </label>
+  <input type="time" id="frenchTime" />
+  <button onclick="convertTime()">Convert</button>
+  <p id="result" class="mt-4 text-lg font-semibold"></p>
+
+  <script>
+    function convertTime() {
+      const input = document.getElementById('frenchTime').value;
+      if (!input) return;
+
+      let [hours, minutes] = input.split(':').map(Number);
+
+      // Subtract 4 hours 30 minutes
+      minutes -= 30;
+      if (minutes < 0) {
+        minutes += 60;
+        hours -= 1;
+      }
+      hours -= 4;
+      if (hours < 0) {
+        hours += 24;
+      }
+
+      const formatted = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+      document.getElementById('result').textContent = `IST Time: ${formatted}`;
+    }
+  </script>
+</body>
+</html>
