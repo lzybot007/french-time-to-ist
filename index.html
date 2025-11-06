@@ -1,37 +1,118 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8" />
-  <title>IST to French Time Converter</title>
+<meta charset="UTF-8">
+<title>iPhone Style Time Picker</title>
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: #f5f5f5;
+}
+
+.wheel-container {
+  display: flex;
+  gap: 20px;
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+.wheel {
+  width: 60px;
+  height: 140px;
+  overflow-y: scroll;
+  scroll-snap-type: y mandatory;
+  scrollbar-width: none; /* Firefox */
+}
+
+.wheel::-webkit-scrollbar {
+  display: none; /* Chrome */
+}
+
+.wheel-item {
+  font-size: 28px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  scroll-snap-align: center;
+  color: #999;
+}
+
+.wheel-item.selected {
+  color: black;
+  font-weight: bold;
+}
+
+.center-line {
+  position: absolute;
+  width: 100%;
+  height: 40px;
+  border-top: 2px solid #ccc;
+  border-bottom: 2px solid #ccc;
+  pointer-events: none;
+}
+</style>
 </head>
-<body class="p-6">
-  <h1 class="text-xl font-bold mb-4">French Time to IST Converter</h1>
-  <label>Enter Indian Time (HH:MM): </label>
-  <input type="time" id="Indiantime" class="time24" />
-  <button onclick="convertTime()">Convert</button>
-  <p id="result" class="mt-4 text-lg font-semibold"></p>
 
-  <script>
-    function convertTime() {
-      const input = document.getElementById('Indiantime').value;
-      if (!input) return;
+<body>
 
-      let [hours, minutes] = input.split(':').map(Number);
+<div class="wheel-container">
+  <div style="position: relative;">
+    <div class="center-line"></div>
+    <div class="wheel" id="hours"></div>
+  </div>
 
-      // adding 4 hours 30 minutes
-      minutes -= 30;
-      if (minutes >= 60) {
-        minutes <= 0;
-        hours -= 1;
-      }
-      hours -= 4;
-      if (hours <= 0) {
-        hours += 24;
-      }
-      
-      const formatted = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
-      document.getElementById('result').textContent = `French Time: ${formatted}`;
+  <div style="position: relative;">
+    <div class="center-line"></div>
+    <div class="wheel" id="minutes"></div>
+  </div>
+</div>
+
+<script>
+function createWheel(element, range) {
+  for (let i = 0; i < range; i++) {
+    let div = document.createElement("div");
+    div.className = "wheel-item";
+    div.innerText = i.toString().padStart(2, '0');
+    element.appendChild(div);
+  }
+}
+
+createWheel(document.getElementById("hours"), 24);
+createWheel(document.getElementById("minutes"), 60);
+
+function updateSelection(wheel) {
+  const items = wheel.querySelectorAll(".wheel-item");
+  let center = wheel.scrollTop + wheel.clientHeight / 2;
+
+  items.forEach(item => item.classList.remove("selected"));
+
+  let closest = null;
+  let closestDist = Infinity;
+
+  items.forEach(item => {
+    let itemCenter = item.offsetTop + item.clientHeight / 2;
+    let dist = Math.abs(center - itemCenter);
+    if (dist < closestDist) {
+      closestDist = dist;
+      closest = item;
     }
-  </script>
+  });
+
+  closest.classList.add("selected");
+}
+
+document.querySelectorAll('.wheel').forEach(wheel => {
+  wheel.addEventListener('scroll', () => updateSelection(wheel));
+  updateSelection(wheel);
+});
+</script>
 </body>
 </html>
